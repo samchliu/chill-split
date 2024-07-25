@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model User {
+  id              String      @id @default(cuid())
+  name            String
+  picture         String
+  lineId          String?     @unique
+  expenseCreators Expense[]   @relation("ExpenseCreator")
+  expensePayers   Expense[]   @relation("ExpensePayer")
+  groupCreators   Group[]
+  groupUsers      GroupUser[]
+  expenseEditors  History[]
+  expenseSharers  Sharer[]
+}
+
+model Group {
+  id         String      @id @default(cuid())
+  name       String
+  picture    String
+  creatorId  String
+  expenses   Expense[]
+  creator    User        @relation(fields: [creatorId], references: [id])
+  groupUsers GroupUser[]
+}
+
+model GroupUser {
+  groupId String
+  userId  String
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user    User   @relation(fields: [userId], references: [id])
+
+  @@id([groupId, userId])
+}
+
+model Expense {
+  id        Int       @id @default(autoincrement())
+  name      String
+  amount    Float
+  date      DateTime  @db.Date
+  note      String
+  groupId   String
+  payerId   String
+  creatorId String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  category  String
+  creator   User      @relation("ExpenseCreator", fields: [creatorId], references: [id])
+  group     Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  payer     User      @relation("ExpensePayer", fields: [payerId], references: [id])
+  historys  History[]
+  sharers   Sharer[]
+}
+
+model Sharer {
+  expenseId Int
+  userId    String
+  amount    Float
+  expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@id([expenseId, userId])
+}
+
+model History {
+  expenseId Int
+  editorId  String
+  editedAt  DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  editor    User     @relation(fields: [editorId], references: [id])
+  expense   Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+
+  @@index([expenseId])
+  @@index([editorId])
+}
