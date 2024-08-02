@@ -7,6 +7,8 @@ import { CreateGroupIcon } from "./create-group-icon";
 import { ShareIcon } from "./share-icon";
 import { CameraIcon } from "./camera-icon";
 import { DeleteIcon } from "./delete-icon";
+import { HomeIcon } from "./home-icon";
+import { SettingIcon } from "./setting-icon";
 
 export {
   PlainIcon,
@@ -18,4 +20,6 @@ export {
   ShareIcon,
   CameraIcon,
   DeleteIcon,
+  HomeIcon,
+  SettingIcon,
 };
