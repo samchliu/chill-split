@@ -9,6 +9,13 @@ import { CameraIcon } from "./camera-icon";
 import { DeleteIcon } from "./delete-icon";
 import { HomeIcon } from "./home-icon";
 import { SettingIcon } from "./setting-icon";
+import { FoodIcon } from "./food-icon";
+import { DrinkIcon } from "./drink-icon";
+import { TransportationIcon } from "./transportation-icon";
+import { AccommodationIcon } from "./accommodation-icon";
+import { ShoppingIcon } from "./shopping-icon";
+import { EntertainmentIcon } from "./entertainment-icon";
+import { MoreIcon } from "./more-icon";
 
 export {
   PlainIcon,
@@ -22,4 +29,11 @@ export {
   DeleteIcon,
   HomeIcon,
   SettingIcon,
+  FoodIcon,
+  DrinkIcon,
+  TransportationIcon,
+  AccommodationIcon,
+  ShoppingIcon,
+  EntertainmentIcon,
+  MoreIcon,
 };
