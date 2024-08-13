@@ -32,18 +32,25 @@ type CreateGroupButtonProps = {
   };
 };
 
-const defaultGroup = {
+const defaultGroup: Group = {
   name: "",
   picture: "/images/example-1.png",
   users: [],
 };
-// "https://fastly.picsum.photos/id/547/256/256.jpg?hmac=QpXg77sLaFldz2yY2d5XyWv1JUmIBFr_rhAY1Rhv5_8",
+
 export default function CreateGroupButton(
   props: Readonly<CreateGroupButtonProps>,
 ) {
   const { user } = props;
   const [group, setGroup] = useState<Group>(defaultGroup);
   const [pending, setPending] = useState<string>();
+
+  function handleOpenChange(open: boolean) {
+    if (open) return;
+
+    setGroup(defaultGroup);
+    setPending(undefined);
+  }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -59,6 +66,12 @@ export default function CreateGroupButton(
   function onGroupPictureChange(url: string) {
     const newGroup = { ...group };
     newGroup.picture = url;
+    setGroup(newGroup);
+  }
+
+  function handleGroupNameChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const newGroup = { ...group };
+    newGroup.name = e.currentTarget.value;
     setGroup(newGroup);
   }
 
@@ -88,7 +101,7 @@ export default function CreateGroupButton(
   }
 
   return (
-    <Sheet>
+    <Sheet onOpenChange={handleOpenChange}>
       <SheetTrigger asChild>
         <button className="mb-4 flex items-center gap-2" type="button">
           <CreateGroupIcon className="stroke-primary-foreground" />
@@ -122,6 +135,7 @@ export default function CreateGroupButton(
                 className="border-b border-foreground leading-loose outline-none"
                 name="group-name"
                 type="text"
+                onChange={handleGroupNameChange}
               />
             </div>
           </div>
