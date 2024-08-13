@@ -1,7 +1,9 @@
 "use server";
 
+import { cookies } from "next/headers";
 import { z } from "zod";
 import prisma from "@/lib/db";
+import { encrypt } from "@/lib/jwt";
 
 const clientId = process.env.LINE_CHANNEL_ID!;
 const UserProfileSchema = z.object({
@@ -42,6 +44,13 @@ export async function login(accessToken: string) {
         name: userProfile.displayName,
         picture: userProfile.pictureUrl,
       },
+    });
+
+    cookies().set({
+      name: "token",
+      value: await encrypt({ client_id: user.id }),
+      expires: new Date(Date.now() + 900 * 1000),
+      // httpOnly: true,
     });
     return { userId: user.id };
   } catch {
