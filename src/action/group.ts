@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/db";
 import { redirect, notFound } from "next/navigation";
+import { headers } from "next/headers";
 
 type GroupData = {
   name: string;
@@ -14,14 +15,18 @@ type GroupData = {
 };
 
 export async function createGroup(groupData: GroupData) {
+  const users = await prisma.user.createManyAndReturn({
+    data: groupData.users,
+  });
+  const userIds = [groupData.creatorId, ...users.map((user) => user.id)];
   const group = await prisma.group.create({
     data: {
       name: groupData.name,
       picture: groupData.picture,
       creator: { connect: { id: groupData.creatorId } },
       groupUsers: {
-        create: groupData.users.map((item) => ({
-          user: { create: item },
+        create: userIds.map((userId) => ({
+          user: { connect: { id: userId } },
         })),
       },
     },
@@ -31,6 +36,17 @@ export async function createGroup(groupData: GroupData) {
 }
 
 export async function getGroupById(groupId: string) {
+  const clientId = headers().get("client-id")!;
+  const groupUser = await prisma.groupUser.findUnique({
+    where: {
+      groupId_userId: {
+        groupId: groupId,
+        userId: clientId,
+      },
+    },
+  });
+  if (!groupUser) notFound();
+
   const group = await prisma.group.findUnique({
     where: { id: groupId },
     include: {
@@ -64,7 +80,7 @@ export async function getGroupById(groupId: string) {
   });
   if (!group) notFound();
 
-  let sorted = {
+  let sortedGroup = {
     id: group.id,
     name: group.name,
     picture: group.picture,
@@ -83,5 +99,5 @@ export async function getGroupById(groupId: string) {
       })),
     })),
   };
-  return sorted;
+  return { userId: clientId, group: sortedGroup };
 }
