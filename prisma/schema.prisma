@@ -20,7 +20,7 @@ model User {
   lineId          String?   @unique
   expenseCreators Expense[]
   groupAdmins     Admin[]
-  groupUsers      Member[]
+  groupMembers      Member[]
   expenseEditors  History[]
   expensePayers   Payer[]
   expenseSharers  Sharer[]
