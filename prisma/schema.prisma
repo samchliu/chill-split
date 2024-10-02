@@ -12,3 +12,93 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id              String    @id @default(uuid())
+  name            String
+  picture         String
+  lineId          String?   @unique
+  expenseCreators Expense[]
+  groupAdmins     Admin[]
+  groupUsers      Member[]
+  expenseEditors  History[]
+  expensePayers   Payer[]
+  expenseSharers  Sharer[]
+}
+
+model Group {
+  id          String    @id @default(cuid())
+  name        String
+  picture     String
+  groupAdmins Admin[]
+  groupUsers  Member[]
+  expenses    Expense[]
+}
+
+model Admin {
+  groupId String
+  userId  String
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user    User   @relation(fields: [userId], references: [id])
+
+  @@id([groupId, userId])
+}
+
+model Member {
+  groupId String
+  userId  String
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user    User   @relation(fields: [userId], references: [id])
+
+  @@id([groupId, userId])
+}
+
+model Expense {
+  id        Int       @id @default(autoincrement())
+  name      String
+  amount    Float
+  date      DateTime  @db.Date
+  note      String
+  groupId   String
+  creatorId String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  category  String
+  creator   User      @relation(fields: [creatorId], references: [id])
+  group     Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  historys  History[]
+  payers    Payer[]
+  sharers   Sharer[]
+}
+
+model Payer {
+  expenseId Int
+  userId    String
+  amount    Float
+  expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@id([expenseId, userId])
+}
+
+model Sharer {
+  expenseId Int
+  userId    String
+  amount    Float
+  expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  user      User    @relation(fields: [userId], references: [id])
+
+  @@id([expenseId, userId])
+}
+
+model History {
+  expenseId Int
+  editorId  String
+  editedAt  DateTime @default(now())
+  id        Int      @id @default(autoincrement())
+  editor    User     @relation(fields: [editorId], references: [id])
+  expense   Expense  @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+
+  @@index([expenseId])
+  @@index([editorId])
+}
