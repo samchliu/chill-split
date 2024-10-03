@@ -42,7 +42,7 @@ export async function login(accessToken: string) {
       create: {
         lineId: userProfile.userId,
         name: userProfile.displayName,
-        picture: userProfile.pictureUrl,
+        avatar: userProfile.pictureUrl,
       },
     });
 

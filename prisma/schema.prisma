@@ -16,11 +16,11 @@ datasource db {
 model User {
   id              String    @id @default(uuid())
   name            String
-  picture         String
+  avatar          String
   lineId          String?   @unique
   expenseCreators Expense[]
   groupAdmins     Admin[]
-  groupMembers      Member[]
+  groupMembers    Member[]
   expenseEditors  History[]
   expensePayers   Payer[]
   expenseSharers  Sharer[]
