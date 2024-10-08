@@ -31,7 +31,7 @@ model Group {
   name        String
   picture     String
   groupAdmins Admin[]
-  groupUsers  Member[]
+  groupMembers  Member[]
   expenses    Expense[]
 }
 
