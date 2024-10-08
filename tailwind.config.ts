@@ -58,7 +58,19 @@ const config: Config = {
   				'3': 'hsl(var(--chart-3))',
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
-  			}
+  			},
+				brand: {
+          orange: "hsl(var(--brand-orange))",
+          yellow: "hsl(var(--brand-yellow))",
+          green: "hsl(var(--brand-green))",
+          pink: "hsl(var(--brand-pink))",
+          neutral: {
+            20: "hsl(var(--brand-neutral-20))",
+            30: "hsl(var(--brand-neutral-30))",
+            60: "hsl(var(--brand-neutral-60))",
+            70: "hsl(var(--brand-neutral-70))",
+          },
+        },
   		}
   	}
   },
