@@ -12,15 +12,29 @@ const Sheet = SheetPrimitive.Root;
 const SheetTrigger = SheetPrimitive.Trigger;
 
 // const SheetClose = SheetPrimitive.Close;
+const sheetCloseVariants = cva(
+  'absolute px-[inherit] disabled:pointer-events-none m-0',
+  {
+    variants: {
+      side: {
+        left: 'left-0',
+        right: 'right-0',
+      },
+    },
+    defaultVariants: {
+      side: 'right',
+    },
+  }
+);
+
 const SheetClose = React.forwardRef<
   React.ElementRef<typeof SheetPrimitive.Close>,
-  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Close>
->(({ className, ...props }, ref) => (
+  React.ComponentPropsWithoutRef<typeof SheetPrimitive.Close> & {
+    side?: 'left' | 'right';
+  }
+>(({ side = 'right', className, ...props }, ref) => (
   <SheetPrimitive.Close
-    className={cn(
-      'absolute right-0 px-[inherit] text-background disabled:pointer-events-none m-0',
-      className
-    )}
+    className={cn(sheetCloseVariants({ side }), className)}
     {...props}
   />
 ));
@@ -43,7 +57,7 @@ const SheetOverlay = React.forwardRef<
 SheetOverlay.displayName = SheetPrimitive.Overlay.displayName;
 
 const sheetVariants = cva(
-  'fixed z-50 gap-4 bg-background p-0 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 data-[state=open]:animate-in data-[state=closed]:animate-out',
+  'overflow-auto flex flex-col fixed z-50 bg-background p-0 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 data-[state=open]:animate-in data-[state=closed]:animate-out',
   {
     variants: {
       side: {
@@ -74,6 +88,7 @@ const SheetContent = React.forwardRef<
     <SheetPrimitive.Content
       ref={ref}
       className={cn(sheetVariants({ side }), className)}
+      aria-describedby={undefined}
       {...props}
     >
       {/* <SheetPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
@@ -92,7 +107,7 @@ const SheetHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      'flex justify-center items-center text-center sm:text-left bg-foreground py-[18px] px-5',
+      'sticky top-0 flex justify-center items-center text-center sm:text-left bg-primary text-primary-foreground py-[18px] px-5',
       className
     )}
     {...props}
@@ -120,7 +135,7 @@ const SheetTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Title
     ref={ref}
-    className={cn('text-lg text-background font-normal', className)}
+    className={cn('text-lg font-normal', className)}
     {...props}
   />
 ));
